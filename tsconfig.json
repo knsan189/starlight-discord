@@ -3,7 +3,8 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "skipLibCheck": true
   },
   "ts-node": {
     "esm": true
