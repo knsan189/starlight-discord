@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "nodemon --exec ts-node app.ts"
+    "dev": "nodemon --exec ts-node app.ts",
+    "build": "tsc",
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",

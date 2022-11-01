@@ -2,14 +2,8 @@ import { Client, GatewayIntentBits, Events, Collection } from "discord.js";
 import axios from "axios";
 import path from "path";
 import fs from "fs";
-import { token } from "./src/config/config.js";
-import { fileURLToPath } from "url";
-
-declare module "discord.js" {
-  export interface Client {
-    commands: Collection<unknown, any>;
-  }
-}
+import { clientId, publicKey, token } from "./src/config/config.js";
+import { VoiceLog } from "./src/@types/types.js";
 
 const client = new Client({
   intents: [
@@ -50,10 +44,6 @@ client.once(Events.ClientReady, (stream) => {
 });
 
 client.on("messageCreate", async (message) => {
-  if (message.content === "승호형 바보") {
-    message.reply("맞습니답 ! 맞구용");
-  }
-
   try {
     if (message.content === "/운세") {
       const response = await axios({
@@ -75,12 +65,43 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.on(Events.VoiceStateUpdate, (oldState, newState) => {
-  console.log(oldState.member);
-  console.log(newState.member);
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
+  const { nickname } = newState.member;
+
+  if (oldState.channelId === newState.channelId) {
+    console.log(`a user ${nickname} moved channel`);
+    return;
+  }
+
+  if (oldState.channelId === null) {
+    console.log(`a ${nickname} joined!`);
+    const request = { time: new Date(), nickname, type: "join" };
+    await axios({
+      method: "POST",
+      url: "http://knsan189.iptime.org:8080/api/history",
+      data: request,
+    });
+    return;
+  }
+
+  if (newState.channelId === null) {
+    console.log(`a user ${nickname} left!`);
+    const request = { time: new Date(), nickname, type: "leave" };
+    await axios({
+      method: "POST",
+      url: "http://knsan189.iptime.org:8080/api/history",
+      data: request,
+    });
+    return;
+  }
+
+  if (newState.channelId !== oldState.channelId) {
+    console.log("a user switched channels");
+  }
 });
 
 client.on(Events.Debug, (message) => console.log(message));
+
 client.on(Events.InteractionCreate, (interaction) => {
   console.log(interaction);
 });
