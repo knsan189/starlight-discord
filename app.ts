@@ -12,6 +12,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildPresences,
   ],
 });
 
@@ -67,7 +68,12 @@ client.on("messageCreate", async (message) => {
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   try {
-    const { nickname } = newState.member;
+    const { nickname, presence } = newState.member;
+
+    // PC 오프라인, MOBILE 온라인 일 경우
+    if (presence.clientStatus.mobile && !presence.clientStatus.desktop) {
+      return;
+    }
 
     if (!nickname) {
       throw new Error("no nickname", { cause: newState.member });
