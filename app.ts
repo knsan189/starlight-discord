@@ -66,37 +66,45 @@ client.on("messageCreate", async (message) => {
 });
 
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-  const { nickname } = newState.member;
+  try {
+    const { nickname } = newState.member;
 
-  if (oldState.channelId === newState.channelId) {
-    console.log(`a user ${nickname} moved channel`);
-    return;
-  }
+    if (!nickname) {
+      throw new Error("no nickname", { cause: newState.member });
+    }
 
-  if (oldState.channelId === null) {
-    console.log(`a ${nickname} joined!`);
-    const request = { time: new Date(), nickname, type: "join" };
-    await axios({
-      method: "POST",
-      url: "http://knsan189.iptime.org:8080/api/history",
-      data: request,
-    });
-    return;
-  }
+    if (oldState.channelId === newState.channelId) {
+      console.log(`${nickname} moved channel`);
+      return;
+    }
 
-  if (newState.channelId === null) {
-    console.log(`a user ${nickname} left!`);
-    const request = { time: new Date(), nickname, type: "leave" };
-    await axios({
-      method: "POST",
-      url: "http://knsan189.iptime.org:8080/api/history",
-      data: request,
-    });
-    return;
-  }
+    if (oldState.channelId === null) {
+      console.log(`${nickname} joined!`);
+      const request = { time: new Date(), nickname, type: "join" };
+      await axios({
+        method: "POST",
+        url: "http://knsan189.iptime.org:8080/api/history",
+        data: request,
+      });
+      return;
+    }
 
-  if (newState.channelId !== oldState.channelId) {
-    console.log("a user switched channels");
+    if (newState.channelId === null) {
+      console.log(`${nickname} left!`);
+      const request = { time: new Date(), nickname, type: "leave" };
+      await axios({
+        method: "POST",
+        url: "http://knsan189.iptime.org:8080/api/history",
+        data: request,
+      });
+      return;
+    }
+
+    if (newState.channelId !== oldState.channelId) {
+      console.log(`${nickname} switched channels`);
+    }
+  } catch (error) {
+    console.log(error);
   }
 });
 
