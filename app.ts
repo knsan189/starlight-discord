@@ -80,7 +80,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     const { nickname, presence } = newState.member;
 
     // PC 오프라인, MOBILE 온라인 일 경우
-    if (presence.clientStatus.mobile && !presence.clientStatus.desktop) {
+    if (presence.clientStatus?.mobile && !presence.clientStatus?.desktop) {
       return;
     }
 
@@ -89,12 +89,12 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     }
 
     if (oldState.channelId === newState.channelId) {
-      console.log(`${nickname} moved channel`, presence.clientStatus);
+      console.log(`${nickname} moved channel`, presence?.clientStatus);
       return;
     }
 
     if (oldState.channelId === null) {
-      console.log(`${nickname} joined!`, presence.clientStatus);
+      console.log(`${nickname} joined!`, presence?.clientStatus);
       const request = { time: new Date(), nickname, type: "join" };
       await axios({
         method: "POST",
@@ -105,7 +105,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     }
 
     if (newState.channelId === null) {
-      console.log(`${nickname} left!`, presence.clientStatus);
+      console.log(`${nickname} left!`, presence?.clientStatus);
       const request = { time: new Date(), nickname, type: "leave" };
       await axios({
         method: "POST",
@@ -116,7 +116,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     }
 
     if (newState.channelId !== oldState.channelId) {
-      console.log(`${nickname} switched channels`, presence.clientStatus);
+      console.log(`${nickname} switched channels`, presence?.clientStatus);
     }
   } catch (error) {
     console.log(error);
