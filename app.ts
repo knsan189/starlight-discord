@@ -26,7 +26,7 @@ function syncServer() {
     if (member.voice.channel) {
       if (
         !member.presence?.clientStatus.mobile ||
-        member.presence.clientStatus.desktop
+        member.presence?.clientStatus.desktop
       ) {
         currentMembers.push(member.nickname);
       }
@@ -80,7 +80,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     const { nickname, presence } = newState.member;
 
     // PC 오프라인, MOBILE 온라인 일 경우
-    if (presence.clientStatus?.mobile && !presence.clientStatus?.desktop) {
+    if (presence?.clientStatus?.mobile && !presence?.clientStatus?.desktop) {
       return;
     }
 
