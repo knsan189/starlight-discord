@@ -28,7 +28,7 @@ function syncServer() {
         !member.presence?.clientStatus.mobile ||
         member.presence?.clientStatus.desktop
       ) {
-        currentMembers.push(member.nickname);
+        currentMembers.push(member.nickname || member.user.username);
       }
     }
   });
