@@ -3,6 +3,7 @@ import axios from "axios";
 import { token } from "./src/config/config.js";
 
 let ready = false;
+process.title = "starlight-discord";
 
 const client = new Client({
   intents: [
@@ -41,7 +42,7 @@ function syncServer() {
 
   axios({
     method: "POST",
-    url: "http://knsan189.iptime.org:8080/api/history/sync",
+    url: "http://localhost:3003/api/history/sync",
     data: { nicknames: currentMembers },
   });
 }
@@ -58,7 +59,7 @@ client.on("messageCreate", async (message) => {
     if (message.content === "/운세") {
       const response = await axios({
         method: "POST",
-        url: "http://knsan189.iptime.org:8080/api/message",
+        url: "http://localhost:3003/api/message",
         data: {
           msg: message.content,
           sender: message.author.username,
@@ -98,7 +99,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
       const request = { time: new Date(), nickname, type: "join" };
       await axios({
         method: "POST",
-        url: "http://knsan189.iptime.org:8080/api/history",
+        url: "http://localhost:3003/api/history",
         data: request,
       });
       return;
@@ -109,7 +110,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
       const request = { time: new Date(), nickname, type: "leave" };
       await axios({
         method: "POST",
-        url: "http://knsan189.iptime.org:8080/api/history",
+        url: "http://localhost:3003/api/history",
         data: request,
       });
       return;
